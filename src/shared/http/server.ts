@@ -4,6 +4,9 @@ import cors from 'cors';
 import routes from './routes';
 import AppError from '@shared/errors/AppError';
 import '@shared/typeorm';
+import { dataSource } from '@shared/typeorm';
+
+dataSource.initialize();
 
 const app = express();
 
