@@ -3,4 +3,4 @@ export default {
     secret: 'hashizao',
     expiresIn: '1d',
   }
-}
+};
