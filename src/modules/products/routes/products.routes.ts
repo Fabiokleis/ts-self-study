@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import ProductController from '@modules/controller/ProductsController';
+import ProductController from '../controller/ProductsController';
 import { celebrate, Joi, Segments } from 'celebrate';
 
 
