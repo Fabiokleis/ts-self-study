@@ -11,8 +11,8 @@ export const UserTokenRepository = dataSource.getRepository(UserToken).extend({
     return userToken;
   },
 
-  async generate(user_id: string): Promise<UserToken | null> {
-    const userToken = await this.create({
+  async generate(user_id: string): Promise<UserToken> {
+    const userToken = this.create({
       user_id
     });
     await this.save(userToken);
