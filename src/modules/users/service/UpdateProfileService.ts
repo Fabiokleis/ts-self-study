@@ -29,7 +29,7 @@ class UpdateProfileService {
     const userUpdateEmail = await UsersRepository.findByEmail(email);
 
     if (userUpdateEmail && userUpdateEmail.id != user_id) {
-      throw new AppError('There email already exists.');
+      throw new AppError('This email already exists.');
     }
 
     if (password && !old_password) {

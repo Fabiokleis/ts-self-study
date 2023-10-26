@@ -6,6 +6,8 @@ import { CreateUserTokens1698251060857 } from "./migrations/1698251060857-Create
 import Product from "@modules/products/typeorm/entities/Product";
 import User from "@modules/users/typeorm/entities/User";
 import UserToken from "@modules/users/typeorm/entities/UserToken";
+import { CreateCustomers1698328142954 } from "./migrations/1698328142954-CreateCustomers";
+import Customer from "@modules/customers/typeorm/entities/Customer";
 
 export const dataSource = new DataSource({
   type: 'postgres',
@@ -14,11 +16,12 @@ export const dataSource = new DataSource({
   username: 'postgres',
   password: 'docker',
   database: 'apivendas',
-  entities: [Product, User, UserToken],
+  entities: [Product, User, UserToken, Customer],
   migrations: [
     CreateProducts1698150181921,
     CreateUsers1698166179981,
-    CreateUserTokens1698251060857
+    CreateUserTokens1698251060857,
+    CreateCustomers1698328142954
   ],
   synchronize: true
 });
