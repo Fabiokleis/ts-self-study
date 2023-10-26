@@ -1,5 +1,5 @@
 import AppError from "@shared/errors/AppError";
-import { UserRepository } from "../typeorm/repositories/UsersRepository";
+import { UsersRepository } from "../typeorm/repositories/UsersRepository";
 import User from "../typeorm/entities/User";
 import { compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
@@ -17,7 +17,7 @@ interface IResponse {
 
 class CreateSessionService {
   public async execute({ email, password }: IRequest): Promise<IResponse> {
-    const user = await UserRepository.findByEmail(email);
+    const user = await UsersRepository.findByEmail(email);
 
     if (!user) {
       throw new AppError('Incorrect email or password.', 401);

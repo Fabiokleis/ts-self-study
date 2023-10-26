@@ -1,5 +1,5 @@
 import AppError from "@shared/errors/AppError";
-import { UserRepository } from "../typeorm/repositories/UsersRepository";
+import { UsersRepository } from "../typeorm/repositories/UsersRepository";
 import { UserTokenRepository } from "../typeorm/repositories/UserTokenRepository";
 import EtherealMail from "@config/mail/etherealMail";
 import path from 'path';
@@ -11,7 +11,7 @@ interface IRequest {
 
 class SendForgotPasswordEmailService {
   public async execute({ email }: IRequest): Promise<void> {
-    const user = await UserRepository.findByEmail(email);
+    const user = await UsersRepository.findByEmail(email);
 
     if (!user) {
       throw new AppError('User doesn\'t exists.');

@@ -1,5 +1,5 @@
 import AppError from "@shared/errors/AppError";
-import { UserRepository } from "../typeorm/repositories/UsersRepository";
+import { UsersRepository } from "../typeorm/repositories/UsersRepository";
 import { UserTokenRepository } from "../typeorm/repositories/UserTokenRepository";
 import { hash } from "bcryptjs";
 
@@ -16,7 +16,7 @@ class ResetPasswordService {
       throw new AppError('User Token does\'nt exists.');
     }
 
-    const user = await UserRepository.findById(userToken.user_id);
+    const user = await UsersRepository.findById(userToken.user_id);
 
     if (!user) {
       throw new AppError('User does\'nt exists.');
@@ -31,7 +31,7 @@ class ResetPasswordService {
 
     user.password = await hash(password, 8);
 
-    await UserRepository.save(user);
+    await UsersRepository.save(user);
   }
 }
 
