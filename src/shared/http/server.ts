@@ -1,18 +1,21 @@
 import 'reflect-metadata';
+import 'dotenv/config'
 import express, { NextFunction, Request, Response } from 'express';
 import 'express-async-errors';
 import cors from 'cors';
 import routes from './routes';
 import { errors } from 'celebrate';
+import { pagination } from 'typeorm-pagination';
 import AppError from '@shared/errors/AppError';
 import '@shared/typeorm';
 import { dataSource } from '@shared/typeorm';
-import uploadConfig from '@config/upload'
+import uploadConfig from '@config/upload';
+
 
 dataSource.initialize();
 
 const app = express();
-
+app.use(pagination);
 app.use(cors());
 app.use(express.json());
 

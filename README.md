@@ -11,7 +11,15 @@ Para subir o banco postgres
 docker run --name postgres -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres
 ```
 
+Para subir o redis
+
+```console
+docker run --name redis -p 6379:6379 -d -t redis:alpine
+```
+
 ### migrations
+
+Crie o banco `apivendas` e rode as migrations;
 
 Para rodar as migrations
 
@@ -19,22 +27,24 @@ Para rodar as migrations
 yarn typeorm migration:run -- -d src/shared/typeorm/index.ts
 ```
 
-### test
+### endpoints
 
-criar no endpoint `/products`
+O projeto é divido em 4 modulos:
 
-```console
-curl --data '{ "name": "book 1", "price": 20, "quantity": 5 }' --header 'Content-Type: application/json' localhost:8080/products
-```
+1. `products`
+2. `users`
+3. `customers`
+4. `orders`
 
-listar no endpoint `/products`
+sendo cada modulo com vários endpoints:
 
-```console
-curl localhost:8080/products
-```
-
-Para ler um product no endpoint `/products`
-
-```console
-curl -G -d 'id=58cef497-c1fc-409a-9ffa-d83ebd10ef0f' localhost:8080/products
-```
+- `/products`
+- `/users`
+  - `/avatar`
+- `/password`
+  - `/forgot`
+  - `/reset`
+- `/sessions`
+- `/profile`
+- `/customers`
+- `/orders`
