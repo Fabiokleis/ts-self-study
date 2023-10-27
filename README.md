@@ -3,6 +3,16 @@
 repo para estudar typescript.
 Construindo uma API Restful de Vendas Javascript com Node.js, ExpressJS, Typescript, TypeORM, Postgres, Redis, etc.
 
+Projeto divido nessa estrutura de diretórios.
+
+```json
+"paths": {
+  "@config/*": ["src/config/*"],
+  "@modules/*": ["src/modules/*"],
+  "@shared/*": ["src/shared/*"]
+},
+```
+
 ### docker
 
 Para subir o banco postgres

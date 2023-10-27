@@ -10,14 +10,19 @@ import AppError from '@shared/errors/AppError';
 import '@shared/typeorm';
 import { dataSource } from '@shared/typeorm';
 import uploadConfig from '@config/upload';
+import rateLimiter from './middlewares/rateLimiter';
 
 
 dataSource.initialize();
 
 const app = express();
-app.use(pagination);
+
+app.use(rateLimiter);
+
 app.use(cors());
 app.use(express.json());
+
+app.use(pagination);
 
 app.use('/files', express.static(uploadConfig.directory));
 
