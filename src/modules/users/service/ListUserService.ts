@@ -1,10 +1,16 @@
-import AppError from "@shared/errors/AppError";
-import { UsersRepository } from "../typeorm/repositories/UsersRepository";
-import User from "../typeorm/entities/User";
+import { inject, injectable } from "tsyringe";
+import { IUsersRepository } from "../domain/repositories/IUsersRepository";
+import { IUser } from "../domain/models/IUser";
 
+
+@injectable()
 class ListUserService {
-  public async execute(): Promise<User[]> {
-    return UsersRepository.find();
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository) {}
+  
+  public async execute(): Promise<IUser[]> {
+    return await this.usersRepository.find();
   }
 }
 

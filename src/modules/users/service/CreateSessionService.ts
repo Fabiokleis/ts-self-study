@@ -1,9 +1,10 @@
 import AppError from "@shared/errors/AppError";
-import { UsersRepository } from "../typeorm/repositories/UsersRepository";
-import User from "../typeorm/entities/User";
+import User from "../infra/typeorm/entities/User";
 import { compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
 import authConfig from "@config/auth"
+import { inject, injectable } from "tsyringe";
+import { IUsersRepository } from "../domain/repositories/IUsersRepository";
 
 interface IRequest {
   email: string,
@@ -15,9 +16,16 @@ interface IResponse {
   token: string,
 }
 
+@injectable()
 class CreateSessionService {
+
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository
+  ) {}
+
   public async execute({ email, password }: IRequest): Promise<IResponse> {
-    const user = await UsersRepository.findByEmail(email);
+    const user = await this.usersRepository.findByEmail(email);
 
     if (!user) {
       throw new AppError('Incorrect email or password.', 401);
@@ -32,7 +40,7 @@ class CreateSessionService {
     const token = sign({
       sub: user.id,
       expiresIn: authConfig.jwt.expiresIn,
-    }, authConfig.jwt.secret);
+    }, authConfig.jwt.secret as string);
 
     return { user, token };
   }

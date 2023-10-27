@@ -1,6 +1,8 @@
 import AppError from "@shared/errors/AppError";
-import { CustomersRepository } from "../typeorm/repositories/CustomersRepository";
-import Customer from "../typeorm/entities/Customer";
+import CustomersRepository from "../infra/typeorm/repositories/CustomersRepository";
+import Customer from "../infra/typeorm/entities/Customer";
+import { inject, injectable } from "tsyringe";
+import { ICustomersRespository } from "../domain/repositories/ICustomersRepository";
 
 interface IPaginateCustomer {
   from: number;
@@ -14,10 +16,16 @@ interface IPaginateCustomer {
   data: Customer[];
 }
 
+@injectable()
 class ListCustomerService {
+  constructor(
+    @inject('CustomersRepository')
+    private customersRepository: ICustomersRespository) {}
+
   public async execute(): Promise<IPaginateCustomer> {
-    const customers = CustomersRepository
-    .createQueryBuilder('customers').paginate();
+
+    // TODO: remover o pagination
+    const customers = this.customersRepository.createQueryBuilder('customers').paginate();
     
 
     return customers as IPaginateCustomer;

@@ -1,6 +1,7 @@
 import AppError from "@shared/errors/AppError";
-import { CustomersRepository } from "../typeorm/repositories/CustomersRepository";
-import Customer from "../typeorm/entities/Customer";
+import Customer from "../infra/typeorm/entities/Customer";
+import { inject, injectable } from "tsyringe";
+import { ICustomersRespository } from "../domain/repositories/ICustomersRepository";
 
 interface IRequest {
   id: string;
@@ -8,19 +9,24 @@ interface IRequest {
   email: string;
 }
 
+@injectable()
 class UpdateCustomerService {
+  constructor(
+    @inject('CustomersRepository')
+    private customersRepository: ICustomersRespository) {}
+
   public async execute({ 
     id, 
     name,
     email,
   }: IRequest): Promise<Customer> {
-    const customer = await CustomersRepository.findById(id);
+    const customer = await this.customersRepository.findById(id);
 
     if (!customer) {
       throw new AppError('customer not found.');
     }
 
-    const customerExists = await CustomersRepository.findByEmail(email);
+    const customerExists = await this.customersRepository.findByEmail(email);
 
     if (customerExists && email !== customer.email) {
       throw new AppError('This email already exists.');
@@ -29,7 +35,7 @@ class UpdateCustomerService {
     customer.name = name;
     customer.email = email;
 
-    await CustomersRepository.save(customer);
+    await this.customersRepository.save(customer);
 
     return customer;
   }

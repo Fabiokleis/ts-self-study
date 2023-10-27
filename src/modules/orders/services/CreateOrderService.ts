@@ -1,8 +1,9 @@
 import AppError from "@shared/errors/AppError";
-import Order from "../typeorm/entities/Order";
-import { OrdersRepository } from "../typeorm/repositories/OrdersRepositories";
-import { CustomersRepository } from "@modules/customers/typeorm/repositories/CustomersRepository";
-import { ProductRepository } from "@modules/products/typeorm/repositories/ProductsRepository";
+import { inject, injectable } from "tsyringe";
+import { IOrdersRepository } from "../domain/repositories/IOrdersRepository";
+import { ICustomersRespository } from "@modules/customers/domain/repositories/ICustomersRepository";
+import { IProductsRepository } from "@modules/products/domain/repositories/IProductsRepository";
+import { IOrder } from "../domain/models/IOrder";
 
 interface IProduct {
   id: string;
@@ -14,15 +15,25 @@ interface IRequest {
   products: IProduct[];
 }
 
+@injectable()
 class CreateOrderService {
-  public async execute({ customer_id, products }: IRequest): Promise<Order> {
-    const customerExists = await CustomersRepository.findById(customer_id);
+  constructor(
+    @inject('OrdersRepository')
+    private ordersRepository: IOrdersRepository,
+    @inject('CustomersRepository')
+    private customersRepository: ICustomersRespository,
+    @inject('ProductsRepository')
+    private productsRepository: IProductsRepository,
+    ) {}
+
+  public async execute({ customer_id, products }: IRequest): Promise<IOrder> {
+    const customerExists = await this.customersRepository.findById(customer_id);
 
     if (!customerExists) {
       throw new AppError('Could not found any customer with the given id.');
     }
 
-    const existsProducts = await ProductRepository.findAllByIds(products);
+    const existsProducts = await this.productsRepository.findAllByIds(products);
 
     if (!existsProducts.length) {
       throw new AppError('Could not find any products with the given ids.');
@@ -57,7 +68,7 @@ class CreateOrderService {
       })
     );
 
-    const order = await OrdersRepository.createOrder({
+    const order = await this.ordersRepository.createOrder({
       customer: customerExists,
       products: serializedProducts,
     });
@@ -71,7 +82,7 @@ class CreateOrderService {
       })
     );
 
-    await ProductRepository.save(updatedProductQuantity);
+    await this.productsRepository.updateProductsQuantity(updatedProductQuantity);
 
     return order;
   }
