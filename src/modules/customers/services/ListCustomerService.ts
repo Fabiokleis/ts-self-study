@@ -1,19 +1,12 @@
-import AppError from "@shared/errors/AppError";
-import CustomersRepository from "../infra/typeorm/repositories/CustomersRepository";
 import Customer from "../infra/typeorm/entities/Customer";
 import { inject, injectable } from "tsyringe";
 import { ICustomersRespository } from "../domain/repositories/ICustomersRepository";
+import { ICustomerPaginate } from "../domain/models/ICustomerPaginate";
 
-interface IPaginateCustomer {
-  from: number;
-  to: number;
-  per_page: number;
-  total: number;
-  current_page: number;
-  prev_page: number | null;
-  next_page: number| null;
-  last_page: number;
-  data: Customer[];
+
+interface SearchParams {
+  page: number;
+  limit: number;
 }
 
 @injectable()
@@ -22,13 +15,11 @@ class ListCustomerService {
     @inject('CustomersRepository')
     private customersRepository: ICustomersRespository) {}
 
-  public async execute(): Promise<IPaginateCustomer> {
-
-    // TODO: remover o pagination
-    const customers = this.customersRepository.createQueryBuilder('customers').paginate();
-    
-
-    return customers as IPaginateCustomer;
+  public async execute({ page, limit }: SearchParams): Promise<ICustomerPaginate> {
+    const take = limit;
+    const skip = (Number(page) - 1) * take;
+    const customers = this.customersRepository.findAll({ page, skip, take });
+    return customers;
   }
 }
 

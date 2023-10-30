@@ -5,12 +5,17 @@ import CreateCustomerService from "../../../services/CreateCustomerService";
 import UpdateCustomerService from "../../../services/UpdateCustomerService";
 import DeleteCustomerService from "../../../services/DeleteCustomerService";
 import { container } from "tsyringe";
+import { SearchParams } from "@modules/customers/domain/repositories/ICustomersRepository";
 
 export default class CustomerController {
   public async index(request: Request, response: Response): Promise<Response> {
+
+    const page = request.query.page ? Number(request.query.page) : 1;
+    const limit = request.query.limit ? Number(request.query.limit) : 15;
+
     const listCustomerService = container.resolve(ListCustomerService);
 
-    const customers = await listCustomerService.execute();
+    const customers = await listCustomerService.execute({ page, limit });
     return response.json(customers);
   }
 

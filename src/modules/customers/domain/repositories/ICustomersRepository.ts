@@ -1,7 +1,15 @@
 import { ICreateCustomer } from "../models/ICreateCustomer";
 import { ICustomer } from "../models/ICustomer";
+import { ICustomerPaginate } from "../models/ICustomerPaginate";
+
+export type SearchParams = {
+  page: number;
+  skip: number;
+  take: number;
+};
 
 export interface ICustomersRespository {
+  findAll(search_params: SearchParams): Promise<ICustomerPaginate>;
   findByName(name: string): Promise<ICustomer | null>;
   findById(id: string): Promise<ICustomer | null>;
   findByEmail(email: string): Promise<ICustomer | null>;

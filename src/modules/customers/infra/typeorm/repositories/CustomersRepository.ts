@@ -1,9 +1,10 @@
 import { dataSource } from "@shared/infra/typeorm";
 import Customer from "../entities/Customer";
-import { ICustomersRespository } from "@modules/customers/domain/repositories/ICustomersRepository";
+import { ICustomersRespository, SearchParams } from "@modules/customers/domain/repositories/ICustomersRepository";
 import { Repository } from "typeorm";
 import { ICreateCustomer } from "@modules/customers/domain/models/ICreateCustomer";
 import { ICustomer } from "@modules/customers/domain/models/ICustomer";
+import { ICustomerPaginate } from "@modules/customers/domain/models/ICustomerPaginate";
 
 
 class CustomersRepository implements ICustomersRespository {
@@ -11,6 +12,23 @@ class CustomersRepository implements ICustomersRespository {
 
   constructor() {
     this.ormRepository = dataSource.getRepository(Customer);
+  }
+
+  public async findAll({ page, skip, take }: SearchParams): Promise<ICustomerPaginate> {
+    const [customers, count] = await this.ormRepository
+    .createQueryBuilder()
+    .skip(skip)
+    .take(take)
+    .getManyAndCount();
+
+    const result = {
+      per_page: take,
+      total: count,
+      current_page: page,
+      data: customers
+    };
+
+    return result;
   }
 
   public async create({ name, email}: ICreateCustomer): Promise<ICustomer> {
